@@ -1,0 +1,74 @@
+{
+  "name": "cortex-plugin-api-test-generator",
+  "version": "1.0.0",
+  "description": "Generate test suites from OpenAPI specs",
+  "kind": "esm",
+  "entryPoint": "mod.ts",
+  "runtime": "deno",
+  "author": "CortexPrism",
+  "license": "MIT",
+  "repository": "https://github.com/CortexPrism/cortex-plugin-api-test-generator",
+  "capabilities": [
+    "tools",
+    "network:fetch",
+    "fs:write"
+  ],
+  "tools": [
+    {
+      "name": "apitest_generate",
+      "description": "Generate tests from an OpenAPI spec",
+      "params": [
+        { "name": "spec", "type": "string", "description": "URL or file path to OpenAPI spec", "required": true },
+        { "name": "framework", "type": "string", "description": "Test framework to generate for", "required": false, "enum": ["jest", "vitest", "pytest", "go_test", "supertest"], "default": "vitest" },
+        { "name": "output_dir", "type": "string", "description": "Directory to write generated tests", "required": true }
+      ]
+    },
+    {
+      "name": "apitest_run",
+      "description": "Run generated tests",
+      "params": [
+        { "name": "test_dir", "type": "string", "description": "Directory containing generated tests", "required": true },
+        { "name": "framework", "type": "string", "description": "Test framework to use", "required": false }
+      ]
+    },
+    {
+      "name": "apitest_validate_spec",
+      "description": "Validate an OpenAPI specification",
+      "params": [
+        { "name": "spec", "type": "string", "description": "URL or file path to OpenAPI spec", "required": true }
+      ]
+    },
+    {
+      "name": "apitest_list_endpoints",
+      "description": "List endpoints from an OpenAPI spec",
+      "params": [
+        { "name": "spec", "type": "string", "description": "URL or file path to OpenAPI spec", "required": true }
+      ]
+    },
+    {
+      "name": "apitest_mock_server",
+      "description": "Start a mock server from an OpenAPI spec",
+      "params": [
+        { "name": "spec", "type": "string", "description": "URL or file path to OpenAPI spec", "required": true },
+        { "name": "port", "type": "number", "description": "Port to run the mock server on", "required": false, "default": 3000 }
+      ]
+    }
+  ],
+  "dependencies": {},
+  "peerDependencies": {
+    "cortex": ">=1.0.0"
+  },
+  "settings": {
+    "section": "General",
+    "fields": [
+      { "key": "defaultFramework", "label": "Default Framework", "type": "select", "description": "Default test framework for generation", "default": "vitest", "options": [
+        { "label": "Vitest", "value": "vitest" },
+        { "label": "Jest", "value": "jest" },
+        { "label": "Pytest", "value": "pytest" },
+        { "label": "Go Test", "value": "go_test" },
+        { "label": "Supertest", "value": "supertest" }
+      ] }
+    ]
+  },
+  "aiDisclosure": { "tools": ["Claude Code (Anthropic)"], "humanReview": true }
+}
