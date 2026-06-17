@@ -1,101 +1,93 @@
-import { assertEquals, assertStringIncludes } from "https://deno.land/std@0.208.0/assert/mod.ts";
-import { tools } from "../../mod.ts";
-import type { PluginContext } from 'cortex/plugins';
+import { assertEquals, assertStringIncludes } from 'https://deno.land/std@0.208.0/assert/mod.ts';
+import { tools } from '../../mod.ts';
+import type { PluginContext, ToolContext } from '../../types.ts';
 
 // Mock PluginContext
-const mockContext: PluginContext = {
-  pluginId: "example-plugin",
-  pluginDir: "/tmp/plugins/example-plugin",
+const mockContext: PluginContext & ToolContext = {
+  pluginId: 'cortex-plugin-api-test-generator',
+  pluginDir: '/tmp/plugins/cortex-plugin-api-test-generator',
   state: {
     get: async () => null,
     set: async () => {},
+    delete: async () => {},
+    list: async () => ({}),
   },
-  config: {},
+  config: {
+    get: async () => null,
+    set: async () => {},
+    getAll: async () => ({}),
+  },
+  logger: {
+    info: () => {},
+    warn: () => {},
+    error: () => {},
+    debug: () => {},
+  },
+  host: {
+    registerTool: () => {},
+    unregisterTool: () => {},
+  },
+  sessionId: 'test-session',
+  workingDir: '/tmp',
+  agentId: 'test-agent',
+  workspaceDir: '/tmp',
 };
 
-// Find tools by name helper
 function findTool(name: string) {
-  return tools.find(t => t.definition.name === name);
+  const tool = tools.find((t) => t.definition.name === name);
+  if (!tool) throw new Error(`Tool "${name}" not found`);
+  return tool;
 }
 
-// Test: hello tool
-Deno.test("hello tool - greets with name", async () => {
-  const tool = findTool("hello");
-  if (!tool) throw new Error("hello tool not found");
-  
-  const result = await tool.execute({ name: "Alice" }, mockContext);
-  assertEquals(result.success, true);
-  assertStringIncludes(result.output, "Hello, Alice");
+Deno.test('tools array — exports all tools', () => {
+  assertEquals(tools.length, 5);
+  assertEquals(tools[0].definition.name, 'apitest_generate');
+  assertEquals(tools[1].definition.name, 'apitest_run');
+  assertEquals(tools[2].definition.name, 'apitest_validate_spec');
+  assertEquals(tools[3].definition.name, 'apitest_list_endpoints');
+  assertEquals(tools[4].definition.name, 'apitest_mock_server');
 });
 
-Deno.test("hello tool - rejects empty name", async () => {
-  const tool = findTool("hello");
-  if (!tool) throw new Error("hello tool not found");
-  
-  const result = await tool.execute({ name: "" }, mockContext);
+Deno.test('apitest_generate — rejects empty spec', async () => {
+  const tool = findTool('apitest_generate');
+  const result = await tool.execute({ 'spec': '' }, mockContext);
   assertEquals(result.success, false);
-  assertStringIncludes(result.error, "non-empty string");
+  assertStringIncludes(result.error ?? '', 'non-empty string');
 });
 
-Deno.test("hello tool - rejects non-string", async () => {
-  const tool = findTool("hello");
-  if (!tool) throw new Error("hello tool not found");
-  
-  const result = await tool.execute({ name: 123 }, mockContext);
+Deno.test('apitest_run — rejects empty test_dir', async () => {
+  const tool = findTool('apitest_run');
+  const result = await tool.execute({ 'test_dir': '' }, mockContext);
   assertEquals(result.success, false);
+  assertStringIncludes(result.error ?? '', 'non-empty string');
 });
 
-// Test: add tool
-Deno.test("add tool - adds numbers correctly", async () => {
-  const tool = findTool("add");
-  if (!tool) throw new Error("add tool not found");
-  
-  const result = await tool.execute({ a: 5, b: 3 }, mockContext);
-  assertEquals(result.success, true);
-  assertEquals(result.output, "8");
-});
-
-Deno.test("add tool - adds negative numbers", async () => {
-  const tool = findTool("add");
-  if (!tool) throw new Error("add tool not found");
-  
-  const result = await tool.execute({ a: -5, b: 3 }, mockContext);
-  assertEquals(result.success, true);
-  assertEquals(result.output, "-2");
-});
-
-Deno.test("add tool - rejects non-numbers", async () => {
-  const tool = findTool("add");
-  if (!tool) throw new Error("add tool not found");
-  
-  const result = await tool.execute({ a: "5", b: "3" }, mockContext);
+Deno.test('apitest_validate_spec — rejects empty spec', async () => {
+  const tool = findTool('apitest_validate_spec');
+  const result = await tool.execute({ 'spec': '' }, mockContext);
   assertEquals(result.success, false);
-  assertStringIncludes(result.error, "numbers");
+  assertStringIncludes(result.error ?? '', 'non-empty string');
 });
 
-// Test: fetch_data tool
-Deno.test("fetch_data tool - rejects empty URL", async () => {
-  const tool = findTool("fetch_data");
-  if (!tool) throw new Error("fetch_data tool not found");
-  
-  const result = await tool.execute({ url: "" }, mockContext);
+Deno.test('apitest_list_endpoints — rejects empty spec', async () => {
+  const tool = findTool('apitest_list_endpoints');
+  const result = await tool.execute({ 'spec': '' }, mockContext);
   assertEquals(result.success, false);
-  assertStringIncludes(result.error, "non-empty string");
+  assertStringIncludes(result.error ?? '', 'non-empty string');
 });
 
-Deno.test("fetch_data tool - rejects non-HTTPS URLs", async () => {
-  const tool = findTool("fetch_data");
-  if (!tool) throw new Error("fetch_data tool not found");
-  
-  const result = await tool.execute({ url: "http://example.com" }, mockContext);
+Deno.test('apitest_mock_server — rejects empty spec', async () => {
+  const tool = findTool('apitest_mock_server');
+  const result = await tool.execute({ 'spec': '' }, mockContext);
   assertEquals(result.success, false);
-  assertStringIncludes(result.error, "HTTPS");
+  assertStringIncludes(result.error ?? '', 'non-empty string');
 });
 
-// Test: tools are exported
-Deno.test("tools array exported", () => {
-  assertEquals(tools.length, 3);
-  assertEquals(tools[0].definition.name, "hello");
-  assertEquals(tools[1].definition.name, "add");
-  assertEquals(tools[2].definition.name, "fetch_data");
+Deno.test('all tools return durationMs', async () => {
+  for (const tool of tools) {
+    const args: Record<string, unknown> = {};
+    const result = await tool.execute(args, mockContext);
+    assertEquals(typeof result.durationMs, 'number');
+    assertEquals(result.durationMs >= 0, true);
+  }
 });
