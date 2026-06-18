@@ -1,6 +1,6 @@
 {
   "name": "cortex-plugin-api-test-generator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Generate test suites from OpenAPI specs",
   "kind": "esm",
   "entryPoint": "mod.ts",
@@ -29,7 +29,13 @@
           "type": "string",
           "description": "Test framework to generate for",
           "required": false,
-          "enum": ["jest", "vitest", "pytest", "go_test", "supertest"],
+          "enum": [
+            "jest",
+            "vitest",
+            "pytest",
+            "go_test",
+            "supertest"
+          ],
           "default": "vitest"
         },
         {
@@ -106,24 +112,47 @@
   "peerDependencies": {
     "cortex": ">=1.0.0"
   },
-  "settings": {
-    "section": "General",
-    "fields": [
-      {
-        "key": "defaultFramework",
-        "label": "Default Framework",
-        "type": "select",
-        "description": "Default test framework for generation",
-        "default": "vitest",
-        "options": [
-          { "label": "Vitest", "value": "vitest" },
-          { "label": "Jest", "value": "jest" },
-          { "label": "Pytest", "value": "pytest" },
-          { "label": "Go Test", "value": "go_test" },
-          { "label": "Supertest", "value": "supertest" }
-        ]
-      }
-    ]
+  "aiDisclosure": {
+    "tools": [
+      "Claude Code (Anthropic)"
+    ],
+    "humanReview": true
   },
-  "aiDisclosure": { "tools": ["Claude Code (Anthropic)"], "humanReview": true }
+  "homepage": "https://github.com/CortexPrism/cortex-plugin-api-test-generator",
+  "ui": {
+    "settings": {
+      "section": "General",
+      "fields": [
+        {
+          "key": "defaultFramework",
+          "label": "Default Framework",
+          "type": "select",
+          "description": "Default test framework for generation",
+          "default": "vitest",
+          "options": [
+            {
+              "label": "Vitest",
+              "value": "vitest"
+            },
+            {
+              "label": "Jest",
+              "value": "jest"
+            },
+            {
+              "label": "Pytest",
+              "value": "pytest"
+            },
+            {
+              "label": "Go Test",
+              "value": "go_test"
+            },
+            {
+              "label": "Supertest",
+              "value": "supertest"
+            }
+          ]
+        }
+      ]
+    }
+  }
 }
