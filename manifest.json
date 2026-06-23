@@ -1,6 +1,6 @@
 {
   "name": "cortex-plugin-api-test-generator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Generate test suites from OpenAPI specs",
   "kind": "esm",
   "entryPoint": "mod.ts",
@@ -36,7 +36,7 @@
             "go_test",
             "supertest"
           ],
-          "default": "vitest"
+          "defaultValue": "vitest"
         },
         {
           "name": "output_dir",
@@ -103,14 +103,14 @@
           "type": "number",
           "description": "Port to run the mock server on",
           "required": false,
-          "default": 3000
+          "defaultValue": 3000
         }
       ]
     }
   ],
   "dependencies": {},
   "peerDependencies": {
-    "cortex": ">=1.0.0"
+    "cortex": ">=0.51.0"
   },
   "aiDisclosure": {
     "tools": [
@@ -128,7 +128,7 @@
           "label": "Default Framework",
           "type": "select",
           "description": "Default test framework for generation",
-          "default": "vitest",
+          "defaultValue": "vitest",
           "options": [
             {
               "label": "Vitest",

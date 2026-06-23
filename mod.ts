@@ -1,4 +1,4 @@
-import type { PluginContext, Tool, ToolCallResult, ToolContext } from './types.ts';
+import type { PluginContext, Tool, ToolCallResult } from 'cortex/plugins';
 
 let config: Record<string, string> = {};
 
@@ -56,7 +56,7 @@ const apitest_generate: Tool = {
     ],
     capabilities: ['network:fetch', 'fs:write'],
   },
-  execute: async (args: Record<string, unknown>, _ctx: ToolContext): Promise<ToolCallResult> => {
+  execute: async (args: Record<string, unknown>, _ctx: PluginContext): Promise<ToolCallResult> => {
     const start = Date.now();
     try {
       const specArg = args.spec;
@@ -185,7 +185,7 @@ const apitest_run: Tool = {
     ],
     capabilities: ['shell:run'],
   },
-  execute: async (args: Record<string, unknown>, _ctx: ToolContext): Promise<ToolCallResult> => {
+  execute: async (args: Record<string, unknown>, _ctx: PluginContext): Promise<ToolCallResult> => {
     const start = Date.now();
     try {
       const test_dir = args.test_dir;
@@ -241,7 +241,7 @@ const apitest_validate_spec: Tool = {
     ],
     capabilities: ['network:fetch'],
   },
-  execute: async (args: Record<string, unknown>, _ctx: ToolContext): Promise<ToolCallResult> => {
+  execute: async (args: Record<string, unknown>, _ctx: PluginContext): Promise<ToolCallResult> => {
     const start = Date.now();
     try {
       const specArg = args.spec;
@@ -302,7 +302,7 @@ const apitest_list_endpoints: Tool = {
     ],
     capabilities: ['network:fetch'],
   },
-  execute: async (args: Record<string, unknown>, _ctx: ToolContext): Promise<ToolCallResult> => {
+  execute: async (args: Record<string, unknown>, _ctx: PluginContext): Promise<ToolCallResult> => {
     const start = Date.now();
     try {
       const specArg = args.spec;
@@ -364,7 +364,7 @@ const apitest_mock_server: Tool = {
     ],
     capabilities: ['network:fetch', 'shell:run'],
   },
-  execute: async (args: Record<string, unknown>, _ctx: ToolContext): Promise<ToolCallResult> => {
+  execute: async (args: Record<string, unknown>, _ctx: PluginContext): Promise<ToolCallResult> => {
     const start = Date.now();
     try {
       const specArg = args.spec;
